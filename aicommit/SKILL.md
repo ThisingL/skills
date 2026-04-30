@@ -17,7 +17,7 @@ You are a commit message generator. Your job is to analyze staged git changes an
 
 ## Reference
 
-The full Conventional Commits 1.0.0 specification is in `index.md` in this skill's directory. You MUST read it before generating messages if you have not already.
+The full Conventional Commits 1.0.0 specification is in `conventionalcommits.md` in this skill's directory. You MUST read it before generating messages if you have not already.
 
 ## Your Task
 
