@@ -8,6 +8,7 @@ Claude Code 自定义 Skills。
 |-------|------|
 | [aicommit](./aicommit/) | 从暂存的 git 变更自动生成 Conventional Commits 规范的提交信息 |
 | [review](./review/) | 审查暂存区变更，自动检测代码/写作模式，分别给出审查意见 |
+| [code-flow](./code-flow/) | 结构化开发工作流：Research → Plan → Annotate → Todo → Implement → Feedback |
 
 ## 使用方式
 
@@ -36,6 +37,7 @@ Custom skills for Claude Code.
 |-------|-------------|
 | [aicommit](./aicommit/) | Generate conventional commit messages from staged git changes |
 | [review](./review/) | Review staged changes with auto-detection of code vs writing mode |
+| [code-flow](./code-flow/) | Structured dev workflow: Research → Plan → Annotate → Todo → Implement → Feedback |
 
 ### Usage
 
