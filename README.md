@@ -6,9 +6,12 @@ Claude Code 自定义 Skills。
 
 | Skill | 说明 |
 |-------|------|
-| [aicommit](./aicommit/) | 从暂存的 git 变更自动生成 Conventional Commits 规范的提交信息 |
-| [review](./review/) | 审查暂存区变更，自动检测代码/写作模式，分别给出审查意见 |
-| [code-flow](./code-flow/) | 结构化开发工作流：Research → Plan → Annotate → Todo → Implement → Feedback |
+| [ai-commit](./ai-commit/) | 从暂存的 git 变更自动生成 Conventional Commits 规范的提交信息 |
+| [diff-review](./diff-review/) | 深度审查暂存区变更，读取完整文件上下文，自适应代码/写作模式 |
+| [code-flow](./code-flow/) | 结构化开发工作流：Research → Plan（含 Grill 追问）→ Annotate → Todo → Implement → Feedback |
+| [grill-me](./grill-me/) | 针对计划或设计方案进行逐一追问，直到达成共识 |
+| [find-skills](./find-skills/) | 帮助发现和安装 agent skills，当用户寻找可扩展功能时触发 |
+| [writing-skills](./writing-skills/) | 创建、编辑、验证 skills 的元技能，遵循 TDD 流程 |
 
 ## 使用方式
 
@@ -35,9 +38,12 @@ Custom skills for Claude Code.
 
 | Skill | Description |
 |-------|-------------|
-| [aicommit](./aicommit/) | Generate conventional commit messages from staged git changes |
-| [review](./review/) | Review staged changes with auto-detection of code vs writing mode |
-| [code-flow](./code-flow/) | Structured dev workflow: Research → Plan → Annotate → Todo → Implement → Feedback |
+| [ai-commit](./ai-commit/) | Generate conventional commit messages from staged git changes |
+| [diff-review](./diff-review/) | Deep staged changes review with full-file context, code and writing modes |
+| [code-flow](./code-flow/) | Structured dev workflow: Research → Plan (with Grill) → Annotate → Todo → Implement → Feedback |
+| [grill-me](./grill-me/) | Interview relentlessly about a plan or design until reaching shared understanding |
+| [find-skills](./find-skills/) | Discover and install agent skills when looking for extensible functionality |
+| [writing-skills](./writing-skills/) | Meta-skill for creating, editing, and verifying skills using TDD approach |
 
 ### Usage
 

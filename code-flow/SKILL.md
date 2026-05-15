@@ -2,7 +2,7 @@
 name: code-flow
 version: 1.0.0
 description: |
-  Structured development workflow: Research → Plan → Annotate → Todo → Implement → Feedback.
+  Structured development workflow: Research → Plan (Grill) → Annotate → Todo → Implement → Feedback.
   Enforces "plan before code" discipline. Never writes code until the user has reviewed
   and approved a written plan. Each phase requires explicit user confirmation to proceed.
 allowed-tools:
@@ -24,7 +24,7 @@ When invoked via `/code-flow`, guide the user through the following 6 phases. Ea
 
 ## Language Rules
 
-- **Conversation and documents (research.md, plan.md)**: Match the user's language. If the user writes in Chinese, respond and write documents in Chinese. If English, use English.
+- **Conversation, questions, and documents (research.md, plan.md)**: Always match the user's language. If the user writes in Chinese, all your responses, grilling questions, recommendations, and written documents must be in Chinese. If English, use English. Detect from the user's first message and stay consistent.
 - **Code**: Always in English (variable names, comments, etc.)
 
 ---
@@ -79,22 +79,57 @@ Present a brief summary of key findings to the user and ask them to review `rese
 ### Goal
 Based on the user's **specific requirement** (provided in this phase) and the research from Phase 1, produce a detailed implementation plan. The plan is a structured spec that captures all architectural and design decisions before any code is written.
 
+**Core discipline: NEVER silently assume a design decision. Every non-trivial choice must be explicitly confirmed by the user before it enters the plan.**
+
 ### Process
 
-1. **Get the requirement**: Ask the user what they want to build, change, or fix. The user will describe their feature/task/bug. If anything is ambiguous, ask for clarification.
+1. **Get the requirement**: Ask the user what they want to build, change, or fix. The user will describe their feature/task/bug.
 
-2. **Write plan.md**: Based on the research findings AND the user's requirement, create `plan.md` in the project root with:
+2. **Grill the design (mandatory)**: Before writing any plan, interview the user about every branch of the design decision tree. This is the most critical step — it turns a vague idea into a precise spec.
+
+   **Rules:**
+   - Ask questions **one at a time**. Do NOT batch multiple unrelated questions.
+   - For each question, **provide your recommended answer** with brief reasoning (based on Research phase findings). The user can accept, reject, or modify.
+   - If a question can be answered by exploring the codebase, **explore it yourself** instead of asking the user.
+   - Walk down each branch of the decision tree, resolving dependencies between decisions one-by-one. (e.g., delivery channel choice affects storage schema, so resolve channel first.)
+   - Continue until ALL major design decisions are resolved. Do not stop early.
+
+   **What counts as a design decision (non-exhaustive):**
+   - Architecture pattern (e.g., fan-out-on-write vs fan-out-on-read)
+   - Data model and storage strategy
+   - API surface and interface design
+   - Integration points with existing code
+   - Delivery/transport mechanism
+   - Error handling and retry strategy
+   - Scale and performance considerations
+   - Security and access control model
+   - What is explicitly OUT of scope for v1
+
+   **When to stop grilling:** When you cannot think of another decision that would change the implementation approach. A good signal: you could describe the file-by-file changes without making any silent assumptions.
+
+   **Anti-patterns (NEVER do these):**
+   - Asking 2-3 surface questions then jumping to write plan.md
+   - Silently picking "reasonable defaults" for decisions the user hasn't confirmed
+   - Putting unresolved decisions in an "Open questions" section instead of resolving them now
+   - Batching 5+ questions in one message (the user will skim and give shallow answers)
+   - Classifying a design decision as "implementation detail" to avoid asking — if it changes how you'd write the code, it's a design decision
+   - Interpreting the user's short answers ("sure", "ok") as a signal to stop grilling — short answers mean your recommendation was good, not that the user wants fewer questions
+   - Pre-deciding something is "obviously out of scope" without confirming — let the user draw the scope boundary
+   - Forgetting to clarify the **boundary of the deliverable** (e.g., backend only? includes frontend? includes tests?)
+
+3. **Write plan.md**: Once all decisions are resolved, write `plan.md` in the project root with:
    - **Objective**: What we're building and why (1-3 sentences)
+   - **Decisions made**: A summary of all key design decisions resolved during grilling, with brief rationale for each
    - **Approach**: Detailed description of the solution strategy
    - **Changes**: File-by-file breakdown of what will be modified/created, with code snippets showing the actual intended changes
    - **Considerations**: Trade-offs, alternatives considered and why they were rejected, risks
-   - **Open questions**: Anything the user needs to decide (if any)
+   - **Out of scope**: What was explicitly deferred
 
-   The plan should be specific enough that implementation becomes mechanical — all creative/architectural decisions are captured here.
+   The plan should be specific enough that implementation becomes mechanical — all creative/architectural decisions are captured here. There should be NO "Open questions" section — everything was resolved in step 2.
 
-3. **Reference existing code**: When proposing patterns, reference how similar things are already done in the codebase (as discovered in research). Prefer extending existing patterns over introducing new ones.
+4. **Reference existing code**: When proposing patterns, reference how similar things are already done in the codebase (as discovered in research). Prefer extending existing patterns over introducing new ones.
 
-4. **Accept reference implementations**: If the user pastes code from other projects as a reference, use it as a model for the plan. Claude produces better plans when it has a concrete reference to work from rather than designing from scratch.
+5. **Accept reference implementations**: If the user pastes code from other projects as a reference, use it as a model for the plan. Claude produces better plans when it has a concrete reference to work from rather than designing from scratch.
 
 ### Phase Exit
 
