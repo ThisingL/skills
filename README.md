@@ -12,13 +12,14 @@ Claude Code 自定义 Skills。
 | [grill-me](./grill-me/) | 针对计划或设计方案进行逐一追问，直到达成共识 |
 | [find-skills](./find-skills/) | 帮助发现和安装 agent skills，当用户寻找可扩展功能时触发 |
 | [writing-skills](./writing-skills/) | 创建、编辑、验证 skills 的元技能，遵循 TDD 流程 |
+| [nano-codebase](./nano-codebase/) | 将陌生代码库"蒸馏"为精简可运行的 nano 版本 + 路径追踪式学习指南，渐进式理解项目 |
 
 ## 使用方式
 
 在 Claude Code 中通过斜杠命令调用：
 
 ```
-/aicommit
+/ai-commit
 ```
 
 ## 添加新 Skill
@@ -44,13 +45,14 @@ Custom skills for Claude Code.
 | [grill-me](./grill-me/) | Interview relentlessly about a plan or design until reaching shared understanding |
 | [find-skills](./find-skills/) | Discover and install agent skills when looking for extensible functionality |
 | [writing-skills](./writing-skills/) | Meta-skill for creating, editing, and verifying skills using TDD approach |
+| [nano-codebase](./nano-codebase/) | Distill an unfamiliar codebase into a runnable nano version + path-tracing learning guide for progressive understanding |
 
 ### Usage
 
 Invoke a skill via slash command in Claude Code:
 
 ```
-/aicommit
+/ai-commit
 ```
 
 ### Adding a New Skill
