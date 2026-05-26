@@ -117,13 +117,70 @@ Based on the user's **specific requirement** (provided in this phase) and the re
    - Pre-deciding something is "obviously out of scope" without confirming — let the user draw the scope boundary
    - Forgetting to clarify the **boundary of the deliverable** (e.g., backend only? includes frontend? includes tests?)
 
-3. **Write plan.md**: Once all decisions are resolved, write `plan.md` in the project root with:
-   - **Objective**: What we're building and why (1-3 sentences)
-   - **Decisions made**: A summary of all key design decisions resolved during grilling, with brief rationale for each
-   - **Approach**: Detailed description of the solution strategy
-   - **Changes**: File-by-file breakdown of what will be modified/created, with code snippets showing the actual intended changes
-   - **Considerations**: Trade-offs, alternatives considered and why they were rejected, risks
-   - **Out of scope**: What was explicitly deferred
+3. **Write plan.md**: Once all decisions are resolved, write `plan.md` in the project root following this standardized structure:
+
+   ```
+   # [Feature/Task Name] 实现方案
+
+   ## 1. 背景与目标
+   ### 1.1 业务背景
+   Why this work is needed. Context the reader needs to understand the rest.
+   ### 1.2 目标
+   What success looks like. Measurable if possible.
+   ### 1.3 非目标 (Out of Scope)
+   What is explicitly deferred or excluded — prevents scope creep.
+
+   ## 2. 现状分析 (if applicable)
+   Include when the design depends on understanding existing code or external systems.
+   Pick the applicable scenario:
+
+   ### 场景 A：对接外部服务
+   - 接口信息 (endpoint, method, request/response structure)
+   - 字段说明 (key fields with types and constraints)
+   - 鉴权与限制 (auth method, rate limits, quotas)
+
+   ### 场景 B：改造/集成现有代码
+   - 相关现有接口与类 (signatures, responsibilities)
+   - 当前调用链 / 数据流
+   - 需要遵循的既有模式与约定
+
+   ### 场景 C：技术选型
+   - 候选方案对比
+   - 选定方案的关键 API / 能力边界
+
+   ## 3. 实现方案
+   ### 3.1 总体设计
+   High-level architecture or flow. Use a simple diagram (ASCII/mermaid) if it clarifies relationships.
+   ### 3.2 详细设计
+   - New/modified classes, interfaces, and methods with signatures
+   - Data model changes (schema, DTO, entity)
+   - Core flow (sequence diagram if multi-step interaction)
+   - Key design decisions made during grilling, with brief rationale
+
+   ## 4. 详细实现步骤与代码
+   ### 4.1 Step 1: [Action description]
+   What to do, which file, with code snippet showing intended changes.
+   ### 4.2 Step 2: [Action description]
+   ...continue for each discrete implementation step.
+
+   ## 5. 配置与部署说明 (if applicable)
+   New config items, environment variables, secrets, migration steps.
+
+   ## 6. 完整改动清单
+   Table or list of ALL files to be created/modified, with one-line description of the change.
+
+   ## 7. 关键注意事项
+   - Risks and mitigations
+   - Backward compatibility concerns
+   - Performance/security considerations
+   - Alternatives considered and why rejected
+   ```
+
+   **Adaptation rules:**
+   - Section 2 (现状分析): SKIP if purely greenfield with no external deps or existing code to integrate.
+   - Section 5 (配置与部署): SKIP if no config/deployment changes needed.
+   - Section 4 (详细步骤): For simple tasks, can merge into Section 3.2.
+   - Sections 1, 3, 6, 7 are MANDATORY regardless of task complexity.
 
    The plan should be specific enough that implementation becomes mechanical — all creative/architectural decisions are captured here. There should be NO "Open questions" section — everything was resolved in step 2.
 
