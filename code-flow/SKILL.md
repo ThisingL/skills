@@ -54,7 +54,7 @@ Deeply understand the codebase before any planning begins. This phase is about t
    - Any existing caching, queuing, or optimization layers
    - Potential bugs or inconsistencies
 
-   Use words like "深入", "详细", "复杂性" as your internal bar — if you haven't reached that depth, keep reading.
+   Your internal bar: thoroughness, detail, and full complexity coverage — if you haven't reached that depth, keep reading.
 
 4. **Write research.md**: Save a detailed report to `research.md` in the project root. The document should cover:
    - System overview and architecture
@@ -117,59 +117,59 @@ Based on the user's **specific requirement** (provided in this phase) and the re
    - Pre-deciding something is "obviously out of scope" without confirming — let the user draw the scope boundary
    - Forgetting to clarify the **boundary of the deliverable** (e.g., backend only? includes frontend? includes tests?)
 
-3. **Write plan.md**: Once all decisions are resolved, write `plan.md` in the project root following this standardized structure:
+3. **Write plan.md**: Once all decisions are resolved, write `plan.md` in the project root following this standardized structure. **All section titles below are structural identifiers — translate them to the user's language when writing the actual plan.md.**
 
    ```
-   # [Feature/Task Name] 实现方案
+   # [Feature/Task Name] Implementation Plan
 
-   ## 1. 背景与目标
-   ### 1.1 业务背景
+   ## 1. Background & Goals
+   ### 1.1 Business Context
    Why this work is needed. Context the reader needs to understand the rest.
-   ### 1.2 目标
+   ### 1.2 Goals
    What success looks like. Measurable if possible.
-   ### 1.3 非目标 (Out of Scope)
+   ### 1.3 Non-Goals (Out of Scope)
    What is explicitly deferred or excluded — prevents scope creep.
 
-   ## 2. 现状分析 (if applicable)
+   ## 2. Current State Analysis (if applicable)
    Include when the design depends on understanding existing code or external systems.
    Pick the applicable scenario:
 
-   ### 场景 A：对接外部服务
-   - 接口信息 (endpoint, method, request/response structure)
-   - 字段说明 (key fields with types and constraints)
-   - 鉴权与限制 (auth method, rate limits, quotas)
+   ### Scenario A: Integrating External Services
+   - API info (endpoint, method, request/response structure)
+   - Field descriptions (key fields with types and constraints)
+   - Auth & limitations (auth method, rate limits, quotas)
 
-   ### 场景 B：改造/集成现有代码
-   - 相关现有接口与类 (signatures, responsibilities)
-   - 当前调用链 / 数据流
-   - 需要遵循的既有模式与约定
+   ### Scenario B: Refactoring / Integrating Existing Code
+   - Relevant existing interfaces and classes (signatures, responsibilities)
+   - Current call chain / data flow
+   - Existing patterns and conventions to follow
 
-   ### 场景 C：技术选型
-   - 候选方案对比
-   - 选定方案的关键 API / 能力边界
+   ### Scenario C: Technology Selection
+   - Candidate comparison
+   - Selected solution's key APIs / capability boundaries
 
-   ## 3. 实现方案
-   ### 3.1 总体设计
-   High-level architecture or flow. Use a simple diagram (ASCII/mermaid) if it clarifies relationships.
-   ### 3.2 详细设计
+   ## 3. Implementation Design
+   ### 3.1 High-Level Design
+   Architecture or flow. Use a simple diagram (ASCII/mermaid) if it clarifies relationships.
+   ### 3.2 Detailed Design
    - New/modified classes, interfaces, and methods with signatures
    - Data model changes (schema, DTO, entity)
    - Core flow (sequence diagram if multi-step interaction)
    - Key design decisions made during grilling, with brief rationale
 
-   ## 4. 详细实现步骤与代码
+   ## 4. Step-by-Step Implementation
    ### 4.1 Step 1: [Action description]
    What to do, which file, with code snippet showing intended changes.
    ### 4.2 Step 2: [Action description]
    ...continue for each discrete implementation step.
 
-   ## 5. 配置与部署说明 (if applicable)
+   ## 5. Configuration & Deployment (if applicable)
    New config items, environment variables, secrets, migration steps.
 
-   ## 6. 完整改动清单
+   ## 6. Change List
    Table or list of ALL files to be created/modified, with one-line description of the change.
 
-   ## 7. 关键注意事项
+   ## 7. Key Considerations
    - Risks and mitigations
    - Backward compatibility concerns
    - Performance/security considerations
@@ -177,9 +177,9 @@ Based on the user's **specific requirement** (provided in this phase) and the re
    ```
 
    **Adaptation rules:**
-   - Section 2 (现状分析): SKIP if purely greenfield with no external deps or existing code to integrate.
-   - Section 5 (配置与部署): SKIP if no config/deployment changes needed.
-   - Section 4 (详细步骤): For simple tasks, can merge into Section 3.2.
+   - Section 2 (Current State Analysis): SKIP if purely greenfield with no external deps or existing code to integrate.
+   - Section 5 (Configuration & Deployment): SKIP if no config/deployment changes needed.
+   - Section 4 (Step-by-Step): For simple tasks, can merge into Section 3.2.
    - Sections 1, 3, 6, 7 are MANDATORY regardless of task complexity.
 
    The plan should be specific enough that implementation becomes mechanical — all creative/architectural decisions are captured here. There should be NO "Open questions" section — everything was resolved in step 2.

@@ -13,6 +13,8 @@ Claude Code 自定义 Skills。
 | [find-skills](./find-skills/) | 帮助发现和安装 agent skills，当用户寻找可扩展功能时触发 |
 | [writing-skills](./writing-skills/) | 创建、编辑、验证 skills 的元技能，遵循 TDD 流程 |
 | [nano-codebase](./nano-codebase/) | 将陌生代码库"蒸馏"为精简可运行的 nano 版本 + 路径追踪式学习指南，渐进式理解项目 |
+| [nuwa-skill](./nuwa-skill/) | 输入人名或模糊需求，自动深度调研并提炼思维框架，生成可运行的人物 Skill |
+| [socratic-teaching-scaffolds](./socratic-teaching-scaffolds/) | 苏格拉底式教学：通过引导提问和渐退支架帮助学习者自主发现知识 |
 
 ## 使用方式
 
@@ -46,6 +48,8 @@ Custom skills for Claude Code.
 | [find-skills](./find-skills/) | Discover and install agent skills when looking for extensible functionality |
 | [writing-skills](./writing-skills/) | Meta-skill for creating, editing, and verifying skills using TDD approach |
 | [nano-codebase](./nano-codebase/) | Distill an unfamiliar codebase into a runnable nano version + path-tracing learning guide for progressive understanding |
+| [nuwa-skill](./nuwa-skill/) | Input a person's name or vague need, auto-research and distill thinking frameworks into a runnable persona Skill |
+| [socratic-teaching-scaffolds](./socratic-teaching-scaffolds/) | Socratic teaching: guide learners to discover knowledge through strategic questioning and progressive scaffolding |
 
 ### Usage
 
