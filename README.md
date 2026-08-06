@@ -4,7 +4,7 @@
 
 [![Claude Code](https://img.shields.io/badge/Claude_Code-Skills-blueviolet?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiPjxwYXRoIGQ9Ik0xMiAyTDIgN2wxMCA1IDEwLTV6Ii8+PHBhdGggZD0iTTIgMTdsMTAgNSAxMC01Ii8+PHBhdGggZD0iTTIgMTJsMTAgNSAxMC01Ii8+PC9zdmc+)](https://github.com/ThisingL/skills)
 [![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)](./LICENSE)
-[![Skills](https://img.shields.io/badge/skills-11-orange?style=for-the-badge)](#-可用-skills)
+[![Skills](https://img.shields.io/badge/skills-12-orange?style=for-the-badge)](#-可用-skills)
 
 **一套可复用的 Claude Code 自定义 Skills，覆盖开发工作流、代码审查、学习辅导等场景。**
 
@@ -65,6 +65,12 @@
 |:------|:-----|
 | [nano-codebase](./nano-codebase/) | 【nano-xxx】将陌生代码库蒸馏为 nano 版本 + 路径追踪式学习指南 |
 | [socratic-teaching-scaffolds](./socratic-teaching-scaffolds/) | 【自学】苏格拉底式教学：引导提问与渐退支架，帮助学习者自主发现知识 |
+
+### ✍️ 学术写作
+
+| Skill | 说明 |
+|:------|:-----|
+| [thesis-polish](./thesis-polish/) | 【中文毕业论文】理工科论文写作与审校双模式，基于范例论文风格指纹，去除 AI 痕迹 |
 
 ### 🏗️ 元技能
 
