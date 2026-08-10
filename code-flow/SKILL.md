@@ -1,6 +1,6 @@
 ---
 name: code-flow
-version: 1.0.0
+version: 1.1.0
 description: |
   Structured development workflow: Research → Plan (Grill) → Annotate → Todo → Implement → Feedback.
   Enforces "plan before code" discipline. Never writes code until the user has reviewed
@@ -24,7 +24,7 @@ When invoked via `/code-flow`, guide the user through the following 6 phases. Ea
 
 ## Language Rules
 
-- **Conversation, questions, and documents (research.md, plan.md)**: Always match the user's language. If the user writes in Chinese, all your responses, grilling questions, recommendations, and written documents must be in Chinese. If English, use English. Detect from the user's first message and stay consistent.
+- **Conversation, questions, and documents (research.md, plan files)**: Always match the user's language. If the user writes in Chinese, all your responses, grilling questions, recommendations, and written documents must be in Chinese. If English, use English. Detect from the user's first message and stay consistent.
 - **Code**: Always in English (variable names, comments, etc.)
 
 ---
@@ -108,7 +108,7 @@ Based on the user's **specific requirement** (provided in this phase) and the re
    **When to stop grilling:** When you cannot think of another decision that would change the implementation approach. A good signal: you could describe the file-by-file changes without making any silent assumptions.
 
    **Anti-patterns (NEVER do these):**
-   - Asking 2-3 surface questions then jumping to write plan.md
+   - Asking 2-3 surface questions then jumping to writing the plan file
    - Silently picking "reasonable defaults" for decisions the user hasn't confirmed
    - Putting unresolved decisions in an "Open questions" section instead of resolving them now
    - Batching 5+ questions in one message (the user will skim and give shallow answers)
@@ -117,7 +117,13 @@ Based on the user's **specific requirement** (provided in this phase) and the re
    - Pre-deciding something is "obviously out of scope" without confirming — let the user draw the scope boundary
    - Forgetting to clarify the **boundary of the deliverable** (e.g., backend only? includes frontend? includes tests?)
 
-3. **Write plan.md**: Once all decisions are resolved, write `plan.md` in the project root following this standardized structure. **All section titles below are structural identifiers — translate them to the user's language when writing the actual plan.md.**
+3. **Write the plan file**: Once all decisions are resolved, write the plan to `plan-<task-slug>.md` in the project root (e.g., `plan-session-expiry.md`). `<task-slug>` is a 2–5 word kebab-case summary of the requirement. This file is **the current plan** — every later phase (Annotate, Todo, Implement, Feedback) reads and updates this same file. Use the standardized structure below. **All section titles below are structural identifiers — translate them to the user's language when writing the actual plan file.**
+
+   **Plan file naming rules:**
+   - NEVER use a bare `plan.md`. A fixed filename forces every new task to overwrite the previous plan, and stale plans become indistinguishable from the current one.
+   - NEVER overwrite or delete an existing `plan-*.md` from a different task. Old plans are project history.
+   - If a plan file for this task already exists (you are continuing earlier work), ask the user whether to update it or start a new one.
+   - If you are resuming in a fresh session and it is not obvious which `plan-*.md` is current, confirm with the user before relying on one — suggest the most likely candidate (recently modified, has unchecked todos) instead of guessing silently.
 
    ```
    # [Feature/Task Name] Implementation Plan
@@ -155,32 +161,41 @@ Based on the user's **specific requirement** (provided in this phase) and the re
    - New/modified classes, interfaces, and methods with signatures
    - Data model changes (schema, DTO, entity)
    - Core flow (sequence diagram if multi-step interaction)
-   - Key design decisions made during grilling, with brief rationale
 
-   ## 4. Step-by-Step Implementation
-   ### 4.1 Step 1: [Action description]
+   ## 4. Design Decisions
+   Table of every key decision resolved during grilling:
+   | Decision | Chosen | Alternatives rejected | Rationale |
+
+   ## 5. Step-by-Step Implementation
+   ### 5.1 Step 1: [Action description]
    What to do, which file, with code snippet showing intended changes.
-   ### 4.2 Step 2: [Action description]
+   ### 5.2 Step 2: [Action description]
    ...continue for each discrete implementation step.
 
-   ## 5. Configuration & Deployment (if applicable)
+   ## 6. Test Plan
+   - Methods: how to run and verify (commands, scripts, manual checks)
+   - Key cases: must-cover cases grouped by happy path / boundary / error
+   Skip obvious CRUD cases — list only what proves THIS design works.
+
+   ## 7. Configuration & Deployment (if applicable)
    New config items, environment variables, secrets, migration steps.
 
-   ## 6. Change List
+   ## 8. Change List
    Table or list of ALL files to be created/modified, with one-line description of the change.
 
-   ## 7. Key Considerations
+   ## 9. Key Considerations
    - Risks and mitigations
    - Backward compatibility concerns
    - Performance/security considerations
-   - Alternatives considered and why rejected
    ```
 
    **Adaptation rules:**
+   - Scale the plan to task complexity: write only what eliminates ambiguity. A simple task's plan can be one page. NEVER pad sections with boilerplate just because the template has them.
    - Section 2 (Current State Analysis): SKIP if purely greenfield with no external deps or existing code to integrate.
-   - Section 5 (Configuration & Deployment): SKIP if no config/deployment changes needed.
-   - Section 4 (Step-by-Step): For simple tasks, can merge into Section 3.2.
-   - Sections 1, 3, 6, 7 are MANDATORY regardless of task complexity.
+   - Section 5 (Step-by-Step): For simple tasks, can merge into Section 3.2.
+   - Section 7 (Configuration & Deployment): SKIP if no config/deployment changes needed.
+   - Section 6 (Test Plan): mandatory, but scale it — two or three lines suffice for a simple task.
+   - Sections 1, 3, 4, 8, 9 are MANDATORY regardless of task complexity.
 
    The plan should be specific enough that implementation becomes mechanical — all creative/architectural decisions are captured here. There should be NO "Open questions" section — everything was resolved in step 2.
 
@@ -190,7 +205,7 @@ Based on the user's **specific requirement** (provided in this phase) and the re
 
 ### Phase Exit
 
-Tell the user the plan has been written to `plan.md`, and ask them to either:
+Tell the user the plan has been written to `plan-<task-slug>.md` (state the actual filename), and ask them to either:
 - Add inline annotations (using `> 📝 review comment:` format) and tell you to process them
 - Confirm the plan is good to proceed
 
@@ -201,14 +216,14 @@ Tell the user the plan has been written to `plan.md`, and ask them to either:
 ## Phase 3: Annotate (Repeatable)
 
 ### Goal
-Process the user's inline annotations in `plan.md` and refine the plan. This phase repeats until the user is satisfied.
+Process the user's inline annotations in the current plan file and refine the plan. This phase repeats until the user is satisfied.
 
 ### Trigger
-The user says they've added annotations to `plan.md` (using `> 📝 review comment:` format).
+The user says they've added annotations to the current plan file (using `> 📝 review comment:` format).
 
 ### Process
 
-1. **Read plan.md**: Find all lines starting with `> 📝 review comment:` or contained in such blockquote sections.
+1. **Read the current plan file**: Find all lines starting with `> 📝 review comment:` or contained in such blockquote sections.
 
 2. **Process each annotation**: For each comment, do exactly what the user asks:
    - Correction → Fix the incorrect assumption
@@ -217,14 +232,14 @@ The user says they've added annotations to `plan.md` (using `> 📝 review comme
    - Domain knowledge → Update the plan to reflect this knowledge
    - Redirection → Restructure the relevant section
 
-3. **Update plan.md**: Rewrite the plan incorporating all feedback. Remove the processed annotations (they've been addressed). Keep the document clean and coherent.
+3. **Update the plan file**: Rewrite the plan incorporating all feedback. Remove the processed annotations (they've been addressed). Keep the document clean and coherent.
 
-4. **DO NOT IMPLEMENT ANYTHING.** This phase is strictly about refining the plan document. No code changes, no file creation beyond plan.md.
+4. **DO NOT IMPLEMENT ANYTHING.** This phase is strictly about refining the plan document. No code changes, no file creation beyond the plan file.
 
 ### Phase Exit
 
 ```
-I've processed all your annotations and updated plan.md.
+I've processed all your annotations and updated the plan file.
 Please review again and either:
 - Add more annotations if anything still needs adjustment
 - Tell me the plan is approved and ready for the todo breakdown
@@ -241,12 +256,13 @@ Break the approved plan into a granular, ordered checklist of implementation tas
 
 ### Process
 
-1. **Decompose the plan**: Read the approved `plan.md` and break it into discrete, independently verifiable tasks. Each task should be:
+1. **Decompose the plan**: Read the approved plan file and break it into discrete, independently verifiable tasks. Each task should be:
    - Small enough to complete in one focused step
    - Ordered by dependency (what must be done first)
    - Specific enough that completion is unambiguous
+   - Verifiable against the Test Plan section — map each task to the case or method that proves it
 
-2. **Append to plan.md**: Add a `## Todo` section at the end of plan.md with the checklist:
+2. **Append to the plan file**: Add a `## Todo` section at the end of the plan file with the checklist:
 
    ```markdown
    ## Todo
@@ -262,7 +278,7 @@ Break the approved plan into a granular, ordered checklist of implementation tas
 ### Phase Exit
 
 ```
-Todo list added to plan.md.
+Todo list added to the plan file.
 Please review the task breakdown. Should I adjust anything, or proceed to implementation?
 ```
 
@@ -279,7 +295,7 @@ Execute the plan. All decisions have been made — implementation should be mech
 
 1. **Work through the todo list** sequentially. For each task:
    - Implement what the plan specifies
-   - Mark the task as done in plan.md: `- [ ]` → `- [x]`
+   - Mark the task as done in the plan file: `- [ ]` → `- [x]`
    - If the project has a lint/typecheck/build command you know about, run it periodically to catch issues early
 
 2. **Follow the plan strictly**:
@@ -295,7 +311,7 @@ Execute the plan. All decisions have been made — implementation should be mech
 ### Phase Exit
 
 ```
-Implementation complete. All tasks in plan.md are marked done.
+Implementation complete. All tasks in the plan file are marked done.
 Please review the changes. Let me know if anything needs adjustment.
 ```
 
@@ -314,7 +330,7 @@ Address the user's feedback on the implementation.
 
 3. **Revert if needed**: If something is fundamentally wrong, the user may revert changes and narrow scope. Accept this and re-implement with the narrower scope.
 
-4. **Keep plan.md updated**: If feedback leads to significant changes, note them in the plan for future reference.
+4. **Keep the plan file updated**: If feedback leads to significant changes, note them in the plan for future reference.
 
 ### Phase Exit
 
@@ -325,10 +341,10 @@ The workflow is complete when the user is satisfied with the implementation.
 ## Key Rules (Always Active)
 
 - **NEVER skip any phase.** Every phase is mandatory regardless of task complexity. Do not suggest skipping, combining, or fast-tracking phases.
-- **NEVER write implementation code during Phases 1-4.** The only files you create/modify in those phases are `research.md` and `plan.md`.
+- **NEVER write implementation code during Phases 1-4.** The only files you create/modify in those phases are `research.md` and the current plan file (`plan-<task-slug>.md`).
 - **NEVER proceed to the next phase without explicit user confirmation.**
 - **NEVER add scope beyond what the plan specifies during implementation.**
 - **The plan is the single source of truth.** If it's not in the plan, don't build it.
-- **Annotations override everything.** The user's inline comments in plan.md take absolute priority over your suggestions.
+- **Annotations override everything.** The user's inline comments in the plan file take absolute priority over your suggestions.
 - **Be language-agnostic.** This workflow works for any language or framework. Adapt your research, planning, and implementation to whatever technology the project uses.
-- **Keep research.md and plan.md as project artifacts.** They stay in the project root unless the user deletes them.
+- **Keep research.md and all `plan-*.md` files as project artifacts.** They stay in the project root unless the user deletes them. Old plans document past tasks — never delete or overwrite them on your own initiative.
