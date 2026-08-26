@@ -216,7 +216,7 @@ Check that identified misconceptions are corrected:
 
 **If misconception persists:**
 - Design new question sequence targeting it specifically
-- See [resources/methodology.md](../methodology.md) for advanced misconception busting
+- See [resources/methodology.md](./methodology.md) for advanced misconception busting
 
 ### Transfer Assessment
 
