@@ -1,33 +1,104 @@
 <div align="center">
 
-# 🛠️ Claude Code Skills
+<h1>Agent Skills</h1>
 
-[![Claude Code](https://img.shields.io/badge/Claude_Code-Skills-blueviolet?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiPjxwYXRoIGQ9Ik0xMiAyTDIgN2wxMCA1IDEwLTV6Ii8+PHBhdGggZD0iTTIgMTdsMTAgNSAxMC01Ii8+PHBhdGggZD0iTTIgMTJsMTAgNSAxMC01Ii8+PC9zdmc+)](https://github.com/ThisingL/skills)
-[![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)](./LICENSE)
-[![Skills](https://img.shields.io/badge/skills-12-orange?style=for-the-badge)](#-可用-skills)
+<p>把开发、学习与日常工作的经验，整理成可复用的 Agent 技能。</p>
 
-**一套可复用的 Claude Code 自定义 Skills，覆盖开发工作流、代码审查、学习辅导等场景。**
+<p><sub>21 SKILLS &nbsp; / &nbsp; 3 COLLECTIONS</sub></p>
 
-[快速开始](#-快速开始) · [Skills 列表](#-可用-skills) · [贡献指南](#-添加新-skill)
+<p>
+  <a href="#catalog">技能目录</a> &nbsp;·&nbsp;
+  <a href="#usage">使用方式</a> &nbsp;·&nbsp;
+  <a href="#contributing">添加技能</a>
+</p>
 
 </div>
 
 ---
 
-## ✨ 特性
+<a id="catalog"></a>
 
-- 🔄 **开发工作流** — 从 commit 到 code review，全链路覆盖
-- 🧠 **思维增强** — 苏格拉底式追问、Karpathy 编程哲学、需求澄清
-- 📚 **学习加速** — 陌生代码库速览、概念自适应教学
-- 🧬 **技能生成** — 输入人名即可蒸馏其思维框架为可运行 Skill
+## 技能目录
+
+按工作场景组织的个人技能库。点击 skill 名称查看入口文件，了解触发条件、工作流程与工具要求。
+
+| 分类 | 用途 | 数量 |
+|:-----|:-----|-----:|
+| [coding/](#coding) | 开发工作流、代码审查与前端设计 | 5 |
+| [learning/](#learning) | 代码库理解、个性化学习与引导教学 | 3 |
+| [tools/](#tools) | 思维追问、文档处理、工程方法与技能管理 | 13 |
+
+<a id="coding"></a>
+
+### Coding · 开发
+
+| Skill | 说明 |
+|:------|:-----|
+| [ai-commit](./coding/ai-commit/SKILL.md) | 从暂存的 git 变更自动生成符合 Conventional Commits 规范的提交信息 |
+| [code-flow](./coding/code-flow/SKILL.md) |【企业内部需求开发】结构化开发工作流：Research → Plan（含 Grill 追问）→ Annotate → Todo → Implement →Feedback  |
+| [diff-review](./coding/diff-review/SKILL.md) | 深度审查暂存区变更，读取完整文件上下文，自适应代码/写作模式 |
+| [frontend-design](./coding/frontend-design/SKILL.md) | 前端设计模式与最佳实践，摆脱千篇一律的 AI 前端 UI |
+| [karpathy-guidelines](./coding/karpathy-guidelines/SKILL.md) |【开发一个完整项目】 Karpathy 风格 coding 指南，适合开发完整项目时使用 |
+
+<a id="learning"></a>
+
+### Learning · 学习
+
+| Skill | 说明 |
+|:------|:-----|
+| [nano-codebase](./learning/nano-codebase/SKILL.md) | 【nano-xxx】将陌生代码库蒸馏为 nano 版本 + 路径追踪式学习指南 |
+| [personalizing-learning-content](./learning/personalizing-learning-content/SKILL.md) | 根据用户提供的知识库改写文本、Markdown 或 PDF 学习材料，输出正文与知识差异说明 |
+| [socratic-teaching-scaffolds](./learning/socratic-teaching-scaffolds/SKILL.md) | 【自学】苏格拉底式教学：引导提问与渐退支架，帮助学习者自主发现知识 |
+
+<a id="tools"></a>
+
+### Tools · 通用工具
+
+#### 思维追问与决策
+
+| Skill | 说明 |
+|:------|:-----|
+| [grilling](./tools/grilling/SKILL.md) | 核心追问流程：围绕计划、决策或想法，按决策依赖逐轮检验假设、澄清分歧 |
+| [grill-me](./tools/grill-me/SKILL.md) | 【AI 拷打你】针对计划或设计方案逐一追问，直到达成共识 |
+| [grill-with-docs](./tools/grill-with-docs/SKILL.md) | 组合 `grilling` 与 `domain-modeling`，在追问过程中同步记录领域术语与架构决策 |
+
+#### 文档、知识管理与论文
+
+| Skill | 说明 |
+|:------|:-----|
+| [defuddle](./tools/defuddle/SKILL.md) | 使用 Defuddle CLI 将网页提取为干净的 Markdown，去除导航和页面杂项 |
+| [domain-modeling](./tools/domain-modeling/SKILL.md) | 梳理项目领域模型与统一术语，维护 `CONTEXT.md` 和架构决策记录（ADR） |
+| [obsidian-markdown](./tools/obsidian-markdown/SKILL.md) | 创建和编辑 Obsidian Markdown，支持双链、嵌入、callout、属性与标签 |
+| [thesis-polish](./tools/thesis-polish/SKILL.md) | 【中文毕业论文】理工科论文写作与审校双模式，基于范例论文风格指纹，去除 AI 痕迹 |
+| [ustc-se-thesis](./tools/ustc-se-thesis/SKILL.md) | 中国科学技术大学软件学院专硕论文指南，覆盖章节组织、排版、UML 建模与规范自查 |
+
+#### 工程执行方法
+
+| Skill | 说明 |
+|:------|:-----|
+| [subagent-driven-development](./tools/subagent-driven-development/SKILL.md) | 在当前会话中按计划分派独立任务给子代理，并审查实现结果 |
+| [test-driven-development](./tools/test-driven-development/SKILL.md) | 实现功能或修复缺陷时遵循先写失败测试、再实现、再重构的 TDD 流程 |
+
+#### 技能发现与创建
+
+| Skill | 说明 |
+|:------|:-----|
+| [find-skills](./tools/find-skills/SKILL.md) | 发现和安装 agent skills，寻找可扩展功能时触发 |
+| [nuwa-skill](./tools/nuwa-skill/SKILL.md) | 【女娲】输入人名或模糊需求，自动深度调研并提炼思维框架，生成可运行的人物 Skill  |
+| [writing-skills](./tools/writing-skills/SKILL.md) | 创建、编辑、验证 skills 的元技能，遵循 TDD 流程 |
+
 
 ---
 
-## 🚀 快速开始
+<a id="usage"></a>
 
-在 Claude Code 中直接通过斜杠命令调用：
+## 使用方式
 
-```bash
+选择所需 skill，按所用 Agent 的方式加载完整目录。参考资料、脚本和配置应与入口文件一起保留。
+
+以下是 Claude Code 加载 skill 后的调用示例：
+
+```text
 # 自动生成规范的 commit message
 /ai-commit
 
@@ -40,64 +111,22 @@
 
 ---
 
-## 📦 可用 Skills
+<a id="contributing"></a>
 
-### 🔧 开发工具
+## 添加技能
 
-| Skill | 说明 |
-|:------|:-----|
-| [ai-commit](./ai-commit/) | 从暂存的 git 变更自动生成符合 Conventional Commits 规范的提交信息 |
-| [diff-review](./diff-review/) | 深度审查暂存区变更，读取完整文件上下文，自适应代码/写作模式 |
-| [code-flow](./code-flow/) |【企业内部需求开发】结构化开发工作流：Research → Plan（含 Grill 追问）→ Annotate → Todo → Implement →Feedback  |
-| [karpathy-guidelines](./karpathy-guidelines/) |【开发一个完整项目】 Karpathy 风格 coding 指南，适合开发完整项目时使用 |
-| [frontend-design](./frontend-design/) | 前端设计模式与最佳实践，摆脱千篇一律的 AI 前端 UI |
+先按用途选择 `coding/`、`learning/` 或 `tools/`，再在分类目录下添加 skill：
 
-### 💡 思维与决策
-
-| Skill | 说明 |
-|:------|:-----|
-| [grill-me](./grill-me/) | 【AI 拷打你】针对计划或设计方案逐一追问，直到达成共识并生成总结文档 |
-| [nuwa-skill](./nuwa-skill/) | 【女娲】输入人名或模糊需求，自动深度调研并提炼思维框架，生成可运行的人物 Skill  |
-
-### 📖 学习与教学
-
-| Skill | 说明 |
-|:------|:-----|
-| [nano-codebase](./nano-codebase/) | 【nano-xxx】将陌生代码库蒸馏为 nano 版本 + 路径追踪式学习指南 |
-| [socratic-teaching-scaffolds](./socratic-teaching-scaffolds/) | 【自学】苏格拉底式教学：引导提问与渐退支架，帮助学习者自主发现知识 |
-
-### ✍️ 学术写作
-
-| Skill | 说明 |
-|:------|:-----|
-| [thesis-polish](./thesis-polish/) | 【中文毕业论文】理工科论文写作与审校双模式，基于范例论文风格指纹，去除 AI 痕迹 |
-
-### 🏗️ 元技能
-
-| Skill | 说明 |
-|:------|:-----|
-| [writing-skills](./writing-skills/) | 创建、编辑、验证 skills 的元技能，遵循 TDD 流程 |
-| [find-skills](./find-skills/) | 发现和安装 agent skills，寻找可扩展功能时触发 |
-
----
-
-## 📝 添加新 Skill
-
-```
-my-skill/
-├── SKILL.md          # 主文件：frontmatter + prompt
-├── README.md         # (可选) skill 说明文档
-└── *.md              # (可选) 参考资料
+```text
+<category>/my-skill/
+├── SKILL.md          # 入口文件：frontmatter + 指令正文
+├── README.md         # （可选）使用说明
+├── references/       # （可选）参考资料，也可放在 skill 目录下
+├── scripts/          # （可选）辅助脚本
+└── agents/           # （可选）代理配置
 ```
 
-1. 创建以 skill 名称命名的目录
-2. 添加 `SKILL.md`，包含 frontmatter（`name`、`version`、`description`、`allowed-tools`）和完整 prompt
-3. 将 skill 需要的参考文件放在同一目录下
-4. 更新本 README 的 Skills 列表
-
----
-
-## 📄 License
-
-[MIT](./LICENSE)
-
+1. 在对应分类下创建以 skill 名称命名的目录。
+2. 添加 `SKILL.md`，frontmatter 至少包含 `name` 和 `description`；按需补充 `version`、`allowed-tools` 等字段，并编写完整指令。
+3. 将参考资料、脚本等配套文件放在该 skill 目录内，使用相对路径引用。
+4. 更新本 README 对应分类的清单、分类数量和顶部技能总数，并检查链接。

@@ -1,0 +1,7 @@
+interface:
+  display_name: "Personalized Learning Rewriter"
+  short_description: "Adapt reading material to your knowledge base"
+  default_prompt: "Use $personalizing-learning-content to adapt this text or PDF to my Markdown knowledge base."
+
+policy:
+  allow_implicit_invocation: true
