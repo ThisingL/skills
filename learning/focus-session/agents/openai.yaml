@@ -1,0 +1,4 @@
+interface:
+  display_name: "专注学习"
+  short_description: "辅助当次专注学习，按需随机提醒，结束后查看时间轴并自由选择回顾"
+  default_prompt: "用 $focus-session 开始一次专注学习，使用默认随机提醒，不记录应用。"

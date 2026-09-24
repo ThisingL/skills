@@ -1,0 +1,565 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Focus Session · 当次专注记录</title>
+  <style>
+/* ===== focus-session 报告样式 · Riso（孔版海报）· 泳道时间轴 + 日内定位 ===== */
+:root{
+  --bg:#F4EFE4;--surface:#FBF7EE;--sunken:#EFE8DA;--line:#1E2B4A;--line-soft:rgba(30,43,74,.3);--line-strong:#1E2B4A;
+  --text:#151B2E;--muted:#4C5470;--quiet:#7C8399;
+  --accent:#D93A16;--accent-ink:#FFF8F0;--focus:#D93A16;--select-bg:rgba(217,58,22,.25);--select-ink:#151B2E;--lane-ring:#151B2E;
+  --hover:#F6E3CC;--pressed:#F4DCC4;--field:#FBF7EE;--track-bar:rgba(30,43,74,.16);
+  --display:"Microsoft YaHei UI","PingFang SC",sans-serif;--display-weight:700;--display-tracking:-.01em;--display-num:var(--mono);
+  --radius-panel:0;--radius-el:0;--radius-btn:0;--swatch-radius:0;--shadow-panel:5px 5px 0 #151B2E;
+  --c-rest:#E0AE3A;--c-paused:#6E7A90;--c-hatch-a:#EFE8DA;--c-hatch-b:#8A93AE;--fallback-seg:#5A6480;
+  --notice-bg:#FDEBD2;--notice-line:#C8901F;--notice-ink:#6E4A08;--error-bg:#FBE0D8;--error-line:#C0451C;--error-ink:#7A2410;
+  --sans:"Microsoft YaHei UI","PingFang SC",system-ui,sans-serif;
+  --mono:"Cascadia Mono",Consolas,ui-monospace,monospace;
+}
+*{box-sizing:border-box} [hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;line-height:1.65;-webkit-font-smoothing:antialiased}
+body:after{content:"";position:fixed;inset:0;z-index:9;pointer-events:none;opacity:.22;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E")}
+p,h1,h2,h3{margin:0} a{color:inherit}
+button,select{font:inherit;color:inherit}
+button{cursor:pointer} button:disabled{opacity:.32;cursor:default}
+button:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--focus);outline-offset:3px}
+::selection{background:var(--select-bg);color:var(--select-ink)}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)} .small{font-size:12px}
+.eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.24em;color:var(--accent);text-transform:uppercase}
+.page{max-width:1120px;margin:0 auto;padding:44px 40px 30px}
+
+/* 顶部 */
+.masthead{display:flex;align-items:center;justify-content:space-between;gap:18px;padding-bottom:22px;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:11px;font-family:var(--mono);font-size:12px;letter-spacing:.14em}
+.brand-mark{display:flex;align-items:flex-end;gap:3px;height:16px}
+.brand-mark i{display:block;width:3px;background:var(--accent)}
+.brand-mark i:nth-child(1){height:8px}
+.brand-mark i:nth-child(2){height:16px}
+.brand-mark i:nth-child(3){height:11px}
+.session-id{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--quiet)}
+.completion{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted)}
+.completion:before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent)}
+
+/* 标题区 */
+.intro{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin:42px 0 30px}
+.intro .eyebrow{margin-bottom:10px}
+.intro h1{font-family:var(--display);font-weight:var(--display-weight);font-size:33px;line-height:1.3;letter-spacing:var(--display-tracking)}
+.session-date{text-align:right;font-size:12px;color:var(--muted)}
+.session-date .mono{display:block;margin-top:6px;font-size:11px;color:var(--quiet)}
+
+/* 概览：一条数据轨 */
+.overview{display:flex;align-items:flex-end;gap:34px;margin-bottom:32px;padding-bottom:26px;border-bottom:1px solid var(--line)}
+.elapsed{padding-right:34px}
+.elapsed-label{display:flex;align-items:center;gap:10px;font-size:11px;color:var(--muted)}
+.elapsed-label:before{content:"";width:16px;height:2px;background:var(--accent)}
+.elapsed-value{font-family:var(--display-num);font-weight:var(--display-weight);font-size:clamp(42px,5.4vw,62px);line-height:1.12;letter-spacing:-.03em}
+.stat{display:flex;flex-direction:column;justify-content:flex-end;align-self:stretch;padding-left:26px;border-left:1px solid var(--line)}
+.stat-label{font-size:11px;color:var(--muted)}
+.stat-value{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:20px;line-height:1.65;font-weight:600;white-space:nowrap}
+.stat-note{font-size:10px;color:var(--quiet)}
+
+/* 面板 */
+.panel{border:1px solid var(--line);background:var(--surface);border-radius:var(--radius-panel);box-shadow:var(--shadow-panel);overflow:hidden}
+.panel-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 24px}
+.panel-title{display:flex;align-items:center;gap:12px}
+.panel-title h2{font-size:15px;font-weight:700;letter-spacing:.01em}
+.section-index{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--accent)}
+.tag{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-family:var(--mono);font-size:10px;color:var(--muted)}
+.tag:before{content:"";width:5px;height:5px;border-radius:50%;background:var(--accent)}
+
+/* 泳道时间轴 */
+.timeline-wrap{padding:0 24px 22px}
+.timeline-topline{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;font-size:10px;color:var(--quiet)}
+.timeline-shell{padding:14px 16px 12px;background:#F2EBDD;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.lanes{display:grid;gap:4px}
+.lane{display:grid;grid-template-columns:104px minmax(0,1fr) 62px;align-items:center;gap:12px}
+.lane-label{font-size:11px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lane-total{font-family:var(--mono);font-size:10px;color:var(--muted);text-align:right}
+.lane-track{position:relative;height:22px;background:rgba(30,43,74,.06);background-image:repeating-linear-gradient(90deg,transparent,transparent calc(5% - 1px),rgba(30,43,74,.12) calc(5% - 1px),rgba(30,43,74,.12) 5%)}
+.lane-track:before{content:"";position:absolute;left:0;top:-4px;bottom:-4px;width:1px;background:rgba(30,43,74,.35)}
+.lane-block{position:absolute;top:1px;bottom:1px;padding:0;border:0;background:var(--segment-color,var(--fallback-seg));cursor:pointer}
+.lane-block:hover{filter:brightness(1.08)}
+.lane-block.rest{background:var(--c-rest)}
+.lane-block.paused{background:var(--c-paused)}
+.lane-block.unobserved{background:repeating-linear-gradient(135deg,var(--c-hatch-a),var(--c-hatch-a) 3px,var(--c-hatch-b) 3px,var(--c-hatch-b) 4px)}
+.lane-block[aria-pressed="true"]{outline:2px solid var(--lane-ring);outline-offset:-2px;z-index:1}
+.ticks{display:flex;justify-content:space-between;gap:8px;padding-top:14px;color:var(--muted);font-family:var(--mono);font-size:10px}
+
+/* 日内定位条 */
+.day-block{margin-top:20px}
+.day-caption{margin-bottom:7px;font-size:10px;color:var(--muted)}
+.day-rail{display:grid;grid-template-columns:repeat(144,minmax(0,1fr));height:10px;background:rgba(30,43,74,.08)}
+.day-cell{background:transparent}
+.day-cell.inside{background:var(--accent)}
+.hourline{display:flex;justify-content:space-between;margin-top:6px;font-family:var(--mono);font-size:9px;color:var(--muted);font-variant-numeric:tabular-nums}
+
+/* 片段详情 */
+.inspector{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 20px;padding:20px 24px 22px;background:var(--sunken);border-top:1px solid var(--line)}
+.selection-meta{display:flex;align-items:center;gap:12px;font-size:10px;color:var(--muted)}
+.selection-index{color:var(--accent);font-weight:700}
+.selection-name{margin:8px 0 4px;font-size:20px;font-weight:600;line-height:1.35;overflow-wrap:anywhere}
+.selection-process{font-family:var(--mono);font-size:10px;color:var(--quiet);overflow-wrap:anywhere}
+.selection-context{grid-column:1/-1;max-width:90ch;font-size:12px;line-height:1.85;color:var(--muted);overflow-wrap:anywhere}
+.selection-context.empty-title{color:var(--quiet)}
+.selection-note{grid-column:1/-1;font-size:10px;color:var(--quiet)}
+.segment-controls{display:flex;align-items:flex-start;gap:7px}
+.duration-pill{font-family:var(--mono);font-size:12px;font-weight:600;white-space:nowrap;border:1px solid var(--line);padding:6px 11px}
+.icon-button{width:34px;height:34px;border:1px solid var(--line);background:transparent;font-size:16px;line-height:1}
+.icon-button:hover:not(:disabled){background:var(--lane-ring);color:var(--bg)}
+
+/* 依次停留 / 应用分布 */
+.details-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:22px;margin-top:22px;align-items:start}
+.panel-head .count{font-family:var(--mono);font-size:10px;color:var(--quiet)}
+.event-list{max-height:420px;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:var(--line-strong) transparent;border-top:1px solid var(--line);padding:0}
+.event{display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:12px;align-items:start;width:100%;padding:12px;text-align:left;border:0;border-bottom:1px solid var(--line-soft);background:transparent}
+.event:last-child{border-bottom:0}
+.event:hover{background:var(--hover)}
+.event[aria-pressed="true"]{background:var(--pressed);box-shadow:inset 3px 0 var(--accent)}
+.event-index{font-family:var(--mono);font-size:10px;color:var(--quiet);line-height:20px}
+.event-main{min-width:0}
+.event-name{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;overflow-wrap:anywhere}
+.event-title{display:block;margin-top:3px;font-size:10px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.event-time{display:block;margin-top:4px;font-family:var(--mono);font-size:10px;color:var(--quiet)}
+.event-duration{font-family:var(--mono);font-size:11px;color:var(--muted);padding-top:2px;white-space:nowrap}
+.swatch{width:8px;height:8px;flex:none;display:inline-block;border-radius:var(--swatch-radius);background:var(--segment-color,var(--fallback-seg));border:1px solid rgba(21,27,46,.22)}
+.swatch.rest{background:var(--c-rest)}
+.swatch.paused{background:var(--c-paused)}
+.swatch.unobserved{background:repeating-linear-gradient(135deg,var(--c-hatch-a),var(--c-hatch-a) 2px,var(--c-hatch-b) 2px,var(--c-hatch-b) 3px)}
+.distribution{padding:2px 24px 22px}
+.app-row{margin-bottom:18px}
+.app-row:last-child{margin-bottom:0}
+.app-info{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:8px;font-size:12px}
+.app-name{display:flex;align-items:center;gap:8px;min-width:0;overflow-wrap:anywhere}
+.app-value{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:10px;color:var(--muted);white-space:nowrap}
+.app-percentage{min-width:30px;text-align:right;color:var(--quiet)}
+.app-track{height:7px;background:var(--track-bar);overflow:hidden}
+.app-bar{height:100%;background:var(--segment-color,var(--fallback-seg))}
+.distribution-note{border-top:1px solid var(--line);padding:14px 24px;font-size:10px;line-height:1.9;color:var(--quiet)}
+.empty{padding:26px 10px;text-align:center;font-size:12px;color:var(--muted)}
+
+/* 可选分类 */
+.optional{margin-top:22px;border:1px solid var(--line);padding:0 22px;background:var(--surface);box-shadow:4px 4px 0 rgba(21,27,46,.9)}
+.optional summary{cursor:pointer;padding:15px 0;font-size:12px;color:var(--muted)}
+.optional summary span{margin-left:9px;font-size:10px;color:var(--quiet)}
+.classification-body{border-top:1px solid var(--line);padding:18px 0 20px}
+.classification-fields{display:grid;grid-template-columns:1.7fr 1fr;gap:18px;margin-bottom:18px}
+.field-label{display:block;margin-bottom:8px;font-size:10px;color:var(--muted)}
+select{display:block;width:100%;max-width:100%;min-width:0;padding:10px 12px;border:1px solid var(--line-strong);background:var(--field);font-size:11px}
+.classification-metrics{display:flex;gap:28px;flex-wrap:wrap}
+.classification-metric{font-size:10px;color:var(--muted)}
+.classification-metric strong{margin-left:10px;font-family:var(--mono);font-size:17px;font-weight:400}
+.classification-note{margin-top:12px;font-size:10px;line-height:1.9;color:var(--quiet)}
+
+/* 页脚区 */
+.report-bottom{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:26px 0}
+.report-bottom p{font-size:11px;line-height:1.9;color:var(--muted)}
+.report-bottom strong{font-weight:700;color:var(--text)}
+.download{border:1px solid transparent;padding:11px 18px;background:var(--accent);color:var(--accent-ink);font-size:11px;font-weight:700;white-space:nowrap;box-shadow:3px 3px 0 var(--lane-ring)}
+.download:hover{background:#B92F0F;transform:translate(1px,1px);box-shadow:2px 2px 0 var(--lane-ring)}
+.status{min-height:1em;margin-top:7px;font-size:11px;color:var(--accent)}
+.footer{display:flex;justify-content:space-between;gap:16px;border-top:1px solid var(--line);padding-top:18px;font-size:9px;color:var(--quiet)}
+.footer span:last-child{font-family:var(--mono);letter-spacing:.16em;white-space:nowrap}
+.demo-notice{margin:0 0 20px;padding:10px 14px;border:1px solid var(--notice-line);background:var(--notice-bg);color:var(--notice-ink);font-size:11px}
+.error{margin-bottom:20px;padding:18px;border:1px solid var(--error-line);background:var(--error-bg);color:var(--error-ink)}
+
+/* 响应式 */
+@media(max-width:900px){
+  .page{padding:32px 26px}
+  .overview{flex-wrap:wrap;gap:22px 28px}
+  .elapsed{width:100%;padding-right:0}
+  .details-grid{grid-template-columns:1fr;gap:18px}
+}
+@media(max-width:640px){
+  .page{padding:22px 16px}
+  .session-id{display:none}
+  .intro{display:block;margin:28px 0 22px}
+  .intro h1{font-size:27px}
+  .session-date{margin-top:12px;text-align:left}
+  .session-date .mono{display:inline;margin-left:8px}
+  .overview{gap:16px 14px}
+  .elapsed-value{font-size:40px}
+  .stat{flex:1 1 0;min-width:0;padding-left:12px}
+  .stat-value{font-size:16px;white-space:normal}
+  .stat-note{overflow-wrap:anywhere}
+  .timeline-wrap{padding:0 16px 18px}
+  .timeline-shell{padding:12px 10px 10px}
+  .lane{grid-template-columns:70px minmax(0,1fr) 0;gap:8px}
+  .lane-total{display:none}
+  .lane-track{height:18px}
+  .ticks{font-size:9px}
+  .ticks span:nth-child(even){display:none}
+  .inspector{padding:18px 16px}
+  .event-list{max-height:340px}
+  .classification-fields{grid-template-columns:1fr;gap:12px}
+  .report-bottom{flex-direction:column;align-items:flex-start;gap:14px}
+  .footer{flex-direction:column;gap:6px}
+  .optional{padding:0 16px}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* 打印 */
+@page{margin:12mm}
+@media print{
+  body{background:#fff;color:#111}
+  body:after{display:none}
+  .page{padding:0;max-width:none}
+  .panel,.inspector,.optional{background:#fff;box-shadow:none}
+  .panel,.masthead,.footer{border-color:#ccc}
+  .download,.segment-controls,.optional,.status,.demo-notice{display:none}
+  .timeline-shell{background:#fff}
+  .event-list{max-height:none;overflow:visible;border-top:0;padding:0}
+  .details-grid{display:block}
+  .details-grid .panel{margin:18px 0}
+  .muted,.session-date,.stat-label,.stat-note,.selection-process,.selection-context,.selection-note,.event-time,.event-title,.event-duration,.distribution-note,.report-bottom p,.footer,.eyebrow,.tag,.count,.lane-total,.day-caption,.hourline,.ticks{color:#444}
+  .stat-value,.elapsed-value,.app-name,.event-name,.selection-name,.panel-title h2,.intro h1,.lane-label{color:#111}
+  .lane-block,.swatch,.app-bar,.day-cell.inside{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  .panel,.lane{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+  <main class="page">
+    <div class="masthead"><div class="brand"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>FOCUS / SESSION</div><span class="session-id" id="session-id"></span><span class="completion">本次已结束</span></div>
+    <header class="intro"><div><p class="eyebrow">A RECORD OF YOUR TIME</p><h1>本次专注记录</h1></div><p class="session-date"><span id="session-date"></span><span class="mono" id="session-period"></span></p></header>
+    <p class="demo-notice" id="demo-notice" hidden>虚构示例 · 这些时间与应用仅用于展示，没有采集实际活动。</p>
+    <div class="error" id="error" role="alert" hidden></div>
+    <section class="overview" aria-label="会话统计">
+      <div class="elapsed"><p class="elapsed-label">本次总时长</p><p class="elapsed-value" id="elapsed-time">00:00:00</p></div>
+      <div class="stat"><p class="stat-label">活动时长</p><p class="stat-value" id="focus-time">—</p><p class="stat-note">专注阶段内的可记录时间</p></div>
+      <div class="stat"><p class="stat-label">短休息</p><p class="stat-value" id="rest-time">—</p><p class="stat-note" id="rest-note">放下屏幕的间隙</p></div>
+      <div class="stat"><p class="stat-label">暂停 / 未观测</p><p class="stat-value" id="away-time">—</p><p class="stat-note" id="away-note">不计入活动时长</p></div>
+    </section>
+    <section class="panel" aria-labelledby="timeline-heading">
+      <div class="panel-head"><div class="panel-title"><span class="section-index">01</span><h2 id="timeline-heading">活动时间轴</h2></div><span class="tag" id="recording-mode"></span></div>
+      <div class="timeline-wrap"><div class="timeline-topline"><span class="mono" id="timeline-span"></span><span>每条轨道一个应用 · 点击色块查看片段</span></div><div class="timeline-shell"><div class="lanes" id="lanes" role="group" aria-label="按应用分轨的活动时间轴"></div></div><div class="ticks" id="ticks" aria-label="时间刻度"></div><div class="day-block"><p class="day-caption" id="day-caption"></p><div class="day-rail" id="day-rail" aria-hidden="true"></div><div class="hourline" id="day-scale" aria-hidden="true"></div></div></div>
+      <div class="inspector" id="inspector" aria-live="polite">
+        <div><p class="selection-meta"><span class="selection-index mono" id="detail-index"></span><span class="mono" id="detail-period"></span></p><h3 class="selection-name" id="detail-app"></h3><p class="selection-process" id="detail-process"></p></div>
+        <div class="segment-controls"><span class="duration-pill" id="detail-duration"></span><button class="icon-button" type="button" id="previous" aria-label="上一个片段" title="上一个片段">←</button><button class="icon-button" type="button" id="next" aria-label="下一个片段" title="下一个片段">→</button></div>
+        <p class="selection-context" id="detail-title"></p><p class="selection-note" id="detail-note"></p>
+      </div>
+    </section>
+    <div class="details-grid">
+      <section class="panel" aria-labelledby="events-heading"><div class="panel-head"><div class="panel-title"><span class="section-index">02</span><h2 id="events-heading">依次停留</h2></div><span class="count" id="event-count"></span></div><div class="event-list" id="event-list" role="group" aria-label="所有片段，可选择短暂出现的活动"></div></section>
+      <section class="panel" aria-labelledby="apps-heading"><div class="panel-head"><div class="panel-title"><span class="section-index">03</span><h2 id="apps-heading">应用分布</h2></div><span class="count">活动时长占比</span></div><div class="distribution" id="app-list"></div><p class="distribution-note" id="recording-note"></p></section>
+    </div>
+    <details class="optional"><summary>按需标注用途<span>可以不填；只根据你自己的判断统计</span></summary><div class="classification-body"><div class="classification-fields"><div><label class="field-label" for="segment-select">选择片段</label><select id="segment-select"></select></div><div><label class="field-label" for="classification">这段时间的用途</label><select id="classification"><option value="unknown">未分类</option><option value="related">与本次学习相关</option><option value="unrelated">与本次学习无关</option></select></div></div><div class="classification-metrics" aria-live="polite"><p class="classification-metric">已分类中的相关占比<strong id="related-ratio">—</strong></p><p class="classification-metric">活动分类覆盖率<strong id="coverage">—</strong></p></div><p class="classification-note" id="classification-note"></p></div></details>
+    <div class="report-bottom"><div><p><strong>想整理刚才的理解，回到对话里说说就好。</strong><br>这份记录只描述时间分布。窗口停留和键鼠空闲，都不能说明你是否专心。</p><p class="status" id="status" role="status" aria-live="polite"></p></div><button class="download" id="download" type="button">下载本次记录 <span aria-hidden="true">↗</span></button></div>
+    <footer class="footer"><span>本页修改不会自动保存；下载保留当前用途分类。复盘在 Agent 对话中进行。</span><span>LOCAL / SINGLE SESSION</span></footer>
+  </main>
+  <script type="application/json" id="session-data">__SESSION_JSON__</script>
+  <script id="report-logic">
+  (() => {
+    'use strict';
+    const validCategories = new Set(['related', 'unrelated', 'unknown']);
+    const names = { 'msedge.exe':'Microsoft Edge', 'chrome.exe':'Google Chrome', 'code.exe':'Visual Studio Code', 'windowsterminal.exe':'Windows Terminal', 'qq.exe':'QQ', 'explorer.exe':'文件资源管理器' };
+    const states = { rest:'短休息', paused:'暂停', unobserved:'未观测' };
+    function classificationFor(segment, index, classifications) {
+      if (segment.state !== 'focus') return segment.state;
+      return validCategories.has(classifications[index]) ? classifications[index] : 'unknown';
+    }
+    function appName(session, segment) {
+      if (session.recording_enabled !== true) return '未记录应用';
+      if (!segment.app) return '应用未获取';
+      const raw = String(segment.app);
+      return Object.prototype.hasOwnProperty.call(names,raw.toLowerCase()) ? names[raw.toLowerCase()] : raw;
+    }
+    function appKey(session, segment) {
+      if (session.recording_enabled !== true) return 'recording:disabled';
+      return segment.app ? 'process:' + String(segment.app).toLowerCase() : 'recording:unavailable';
+    }
+    function segmentDetails(session, segment) {
+      if (segment.state !== 'focus') return { name:states[segment.state] || '未知状态', process:'', title:'', titleStatus:'none' };
+      const recorded = session.recording_enabled === true;
+      const enabled = recorded && session.title_recording_enabled === true;
+      const title = enabled && typeof segment.title === 'string' ? segment.title : '';
+      return { name:appName(session,segment), process:recorded && segment.app ? String(segment.app) : '', title,
+        titleStatus:!recorded ? 'unrecorded' : !enabled ? 'disabled' : title ? 'recorded' : 'unavailable' };
+    }
+    function aggregate(session, classifications = {}) {
+      const totals = { focus:0, related:0, unrelated:0, unknown:0, rest:0, paused:0, unobserved:0, ratio:null, coverage:null, apps:[] };
+      const apps = new Map();
+      session.segments.forEach((segment, index) => {
+        const duration = Math.max(0, segment.end - segment.start);
+        if (segment.state === 'focus') {
+          totals.focus += duration;
+          totals[classificationFor(segment,index,classifications)] += duration;
+          const key = appKey(session,segment);
+          if (!apps.has(key)) apps.set(key,{ key,name:appName(session,segment),process:session.recording_enabled === true && segment.app ? String(segment.app) : null,seconds:0 });
+          apps.get(key).seconds += duration;
+        } else if (['rest','paused','unobserved'].includes(segment.state)) totals[segment.state] += duration;
+      });
+      const classified = totals.related + totals.unrelated;
+      totals.ratio = classified > 0 ? totals.related / classified : null;
+      totals.coverage = totals.focus > 0 ? classified / totals.focus : null;
+      totals.apps = Array.from(apps.values()).sort((a,b) => b.seconds - a.seconds);
+      return totals;
+    }
+    function safeJSON(value) {
+      return JSON.stringify(value).replace(/[<>&\u2028\u2029]/g,character => '\\u' + character.charCodeAt(0).toString(16).padStart(4,'0'));
+    }
+    function buildSavedHTML(source, session, classifications = {}) {
+      const clean = {};
+      session.segments.forEach((segment,index) => {
+        if (segment.state === 'focus' && validCategories.has(classifications[index]) && classifications[index] !== 'unknown') clean[index] = classifications[index];
+      });
+      const recording = session.recording_enabled === true;
+      const titles = recording && session.title_recording_enabled === true;
+      const saved = { ...session, title_recording_enabled:titles, segments:session.segments.map(segment => ({ ...segment,
+        app:recording && segment.state === 'focus' ? segment.app : null,
+        title:titles && segment.state === 'focus' && typeof segment.title === 'string' ? segment.title : ''
+      })), review:{ classifications:clean } };
+      return source.replace(/(<script type="application\/json" id="session-data">)[\s\S]*?(<\/script>)/,(_,open,close) => open + safeJSON(saved) + close);
+    }
+    window.ReportLogic = { aggregate, buildSavedHTML, classificationFor, appName, appKey, segmentDetails };
+  })();
+  </script>
+  <script id="report-ui">
+  (() => {
+    'use strict';
+    const get = id => document.getElementById(id);
+    const originalMarkup = '<!doctype html>\n' + document.documentElement.outerHTML;
+    let session;
+    try {
+      session = JSON.parse(get('session-data').textContent);
+      if (session.schema_version !== 1 || !Array.isArray(session.segments) || !Number.isFinite(session.duration_seconds) || session.duration_seconds < 0 || !Number.isFinite(new Date(session.started_at).getTime())) throw new Error('invalid session');
+      if (session.segments.some(segment => !Number.isFinite(segment.start) || !Number.isFinite(segment.end) || segment.start < 0 || segment.end < segment.start || !['focus','rest','paused','unobserved'].includes(segment.state))) throw new Error('invalid segment');
+    } catch (_) {
+      get('error').hidden = false;
+      get('error').textContent = '这份记录的会话数据无法读取，请重新生成报告。';
+      ['download','previous','next','classification','segment-select'].forEach(id => { get(id).disabled = true; });
+      return;
+    }
+    const logic = window.ReportLogic;
+    const classifications = Object.assign({},session.review && session.review.classifications || {});
+    const labels = { rest:'短休息', paused:'暂停', unobserved:'未观测' };
+    const palette = ["#2B4FA2","#D93A16","#1E8C7C","#B8860B","#A93C6B","#6A4FA8","#4B7A3F","#8A5A44"];
+    const colors = new Map();
+    const totals = logic.aggregate(session,classifications);
+    totals.apps.forEach((app,index) => colors.set(app.key,app.process === null ? '#88959e' : palette[index % palette.length]));
+    let selected = 0;
+    const started = new Date(session.started_at);
+    const duration = seconds => {
+      const rounded = Math.max(0,Math.round(seconds));
+      if (rounded < 60) return rounded + ' 秒';
+      const minutes = Math.floor(rounded / 60), remaining = rounded % 60;
+      if (minutes < 60) return minutes + ' 分' + (remaining ? ' ' + remaining + ' 秒' : '');
+      return Math.floor(minutes / 60) + ' 时 ' + minutes % 60 + ' 分';
+    };
+    const clockDuration = seconds => {
+      const total = Math.max(0,Math.round(seconds));
+      return [Math.floor(total / 3600),Math.floor(total % 3600 / 60),total % 60].map(value => String(value).padStart(2,'0')).join(':');
+    };
+    const percentage = value => value === null ? '—' : Math.round(value * 100) + '%';
+    const timeAt = seconds => new Date(started.getTime() + seconds * 1000).toLocaleTimeString('zh-CN',{ hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false });
+    const period = segment => timeAt(segment.start) + ' — ' + timeAt(segment.end);
+    const make = (tag,text,className) => {
+      const element = document.createElement(tag);
+      if (text !== undefined) element.textContent = text;
+      if (className) element.className = className;
+      return element;
+    };
+    const nameFor = segment => segment.state === 'focus' ? logic.appName(session,segment) : labels[segment.state];
+    const colorize = (element,segment) => {
+      if (segment.state === 'focus') element.style.setProperty('--segment-color',colors.get(logic.appKey(session,segment)) || '#88959e');
+    };
+    function select(index, revealRow = false) {
+      selected = Math.max(0,Math.min(session.segments.length - 1,index));
+      renderSelection();
+      if (revealRow) get('event-list').children[selected]?.scrollIntoView({ block:'nearest', behavior:'auto' });
+    }
+    get('session-date').textContent = started.toLocaleDateString('zh-CN',{ year:'numeric', month:'2-digit', day:'2-digit' });
+    get('session-period').textContent = timeAt(0) + ' — ' + timeAt(session.duration_seconds);
+    get('session-id').textContent = 'SESSION / ' + String(session.session_id || '').slice(0,8).toUpperCase();
+    get('demo-notice').hidden = session.demo !== true;
+    get('elapsed-time').textContent = clockDuration(session.duration_seconds);
+    get('focus-time').textContent = duration(totals.focus);
+    get('rest-time').textContent = duration(totals.rest);
+    get('rest-note').textContent = session.segments.filter(segment => segment.state === 'rest').length + ' 段短休息';
+    get('away-time').textContent = duration(totals.paused + totals.unobserved);
+    get('away-note').textContent = '暂停 ' + duration(totals.paused) + ' · 未观测 ' + duration(totals.unobserved);
+    get('recording-mode').textContent = session.recording_enabled !== true ? '仅记录阶段' : session.title_recording_enabled === true ? '应用 + 窗口标题' : '仅记录应用';
+    get('timeline-span').textContent = 'SPAN / ' + clockDuration(session.duration_seconds);
+    get('event-count').textContent = String(session.segments.length).padStart(2,'0') + ' 个片段';
+    for (let index = 0; index <= 4; index++) get('ticks').append(make('span',timeAt(session.duration_seconds * index / 4)));
+    const recordingNotes = [];
+    if (session.recording_enabled !== true) recordingNotes.push('本次未开启应用记录，仅保留专注、休息等阶段，无法还原具体应用。');
+    else {
+      recordingNotes.push('按前台应用汇总；同一浏览器内的不同页面仍合并到该浏览器。');
+      if (session.title_recording_enabled !== true) recordingNotes.push('本次未记录窗口标题，无法区分同一浏览器中的页面。');
+      else recordingNotes.push('已记录到的窗口标题可在片段详情中查看；标题不一定能说明正在看的内容。');
+      if (totals.apps.some(app => app.key === 'recording:unavailable')) recordingNotes.push('部分活动未能获取前台应用，已单独列为“应用未获取”。');
+    }
+    recordingNotes.push('比例以活动时长为分母，扣除短休息、暂停与未观测。');
+    get('recording-note').textContent = recordingNotes.join(' ');
+    const span = session.duration_seconds || 1;
+    const at = seconds => Math.max(0,seconds) / span * 100;
+    const groups = new Map();
+    session.segments.forEach((segment,index) => {
+      const focused = segment.state === 'focus';
+      const key = focused ? logic.appKey(session,segment) : 'state:' + segment.state;
+      if (!groups.has(key)) groups.set(key,{ key, state:focused ? null : segment.state,
+        label:focused ? logic.appName(session,segment) : labels[segment.state], color:focused ? colors.get(key) : null,
+        process:focused && session.recording_enabled === true && segment.app ? String(segment.app) : null,
+        seconds:0, items:[] });
+      const group = groups.get(key);
+      group.seconds += Math.max(0,segment.end - segment.start);
+      group.items.push(index);
+    });
+    const mergeLimit = 8;
+    const appGroups = Array.from(groups.values()).filter(group => !group.state).sort((a,b) => b.seconds - a.seconds);
+    const merged = appGroups.splice(mergeLimit);
+    if (merged.length) appGroups.push({ key:'merged', state:'merged', label:'其他应用', color:'#5A6480', process:null,
+      seconds:merged.reduce((sum,group) => sum + group.seconds,0),
+      items:merged.reduce((list,group) => list.concat(group.items),[]).sort((a,b) => a - b) });
+    const laneGroups = appGroups.concat(['rest','paused','unobserved'].map(state => groups.get('state:' + state)).filter(Boolean));
+    laneGroups.forEach(group => {
+      const lane = make('div',undefined,'lane');
+      const label = make('p',group.label,'lane-label');
+      if (group.process) label.title = group.process;
+      const track = make('div',undefined,'lane-track');
+      track.setAttribute('aria-hidden','true');
+      group.items.forEach(index => {
+        const segment = session.segments[index];
+        const block = make('button');
+        block.type = 'button';
+        block.className = 'lane-block' + (group.state ? ' ' + group.state : '');
+        block.dataset.segment = String(index);
+        block.style.left = at(segment.start) + '%';
+        block.style.width = Math.max(0.4,at(segment.end) - at(segment.start)) + '%';
+        if (group.color) block.style.setProperty('--segment-color',group.color);
+        block.title = period(segment) + ' · ' + nameFor(segment) + ' · ' + duration(segment.end - segment.start);
+        block.setAttribute('aria-label',block.title);
+        block.setAttribute('aria-pressed','false');
+        block.addEventListener('click',() => select(index));
+        track.append(block);
+      });
+      lane.append(label,track,make('p',duration(group.seconds),'lane-total'));
+      get('lanes').append(lane);
+    });
+    const railCells = 144;
+    const midnight = new Date(started); midnight.setHours(0,0,0,0);
+    const dayOffset = Math.max(0,Math.round((started.getTime() - midnight.getTime()) / 1000));
+    for (let cell = 0; cell < railCells; cell++) {
+      const from = cell * 600;
+      const inside = from < dayOffset + session.duration_seconds && from + 600 > dayOffset;
+      get('day-rail').append(make('span',undefined,inside ? 'day-cell inside' : 'day-cell'));
+    }
+    ['00:00','06:00','12:00','18:00','24:00'].forEach(text => get('day-scale').append(make('span',text)));
+    get('day-caption').textContent = '本次在一天中的位置 · 每格 10 分钟 · ' + timeAt(0) + ' — ' + timeAt(session.duration_seconds);
+    session.segments.forEach((segment,index) => {
+      const name = nameFor(segment);
+      const option = make('option',String(index + 1).padStart(2,'0') + ' · ' + period(segment) + ' · ' + name);
+      option.value = String(index);
+      get('segment-select').append(option);
+      const row = make('button',undefined,'event');
+      row.type = 'button';
+      row.setAttribute('aria-pressed','false');
+      const main = make('span',undefined,'event-main');
+      const heading = make('span',undefined,'event-name');
+      const swatch = make('i',undefined,'swatch ' + segment.state);
+      swatch.setAttribute('aria-hidden','true');
+      colorize(swatch,segment);
+      heading.append(swatch,make('span',name));
+      main.append(heading);
+      const title = logic.segmentDetails(session,segment).title;
+      if (title) {
+        const titleNode = make('span',title,'event-title');
+        titleNode.title = title;
+        main.append(titleNode);
+      }
+      main.append(make('span',period(segment),'event-time'));
+      row.append(make('span',String(index + 1).padStart(2,'0'),'event-index'),main,make('span',duration(segment.end - segment.start),'event-duration'));
+      row.addEventListener('click',() => select(index));
+      get('event-list').append(row);
+    });
+    if (!session.segments.length) {
+      get('lanes').append(make('p','本次没有记录到时间片段。','empty'));
+      get('day-caption').textContent = '';
+      get('event-list').append(make('p','本次没有活动片段。','empty'));
+      get('inspector').hidden = true;
+      get('segment-select').disabled = true;
+      get('classification').disabled = true;
+    }
+    totals.apps.forEach(app => {
+      const row = make('div',undefined,'app-row');
+      row.style.setProperty('--segment-color',colors.get(app.key));
+      const info = make('div',undefined,'app-info');
+      const name = make('span',undefined,'app-name');
+      if (app.process) name.title = app.process;
+      const swatch = make('i',undefined,'swatch');
+      swatch.setAttribute('aria-hidden','true');
+      name.append(swatch,make('span',app.name));
+      const value = make('span',undefined,'app-value');
+      value.append(make('span',duration(app.seconds)),make('span',percentage(totals.focus ? app.seconds / totals.focus : null),'app-percentage'));
+      info.append(name,value);
+      const track = make('div',undefined,'app-track');
+      const bar = make('div',undefined,'app-bar');
+      bar.style.width = (totals.focus ? app.seconds / totals.focus * 100 : 0) + '%';
+      track.append(bar);
+      row.append(info,track);
+      get('app-list').append(row);
+    });
+    if (!totals.apps.length) get('app-list').append(make('p','本次没有可统计的活动时长。','empty'));
+    function renderSelection() {
+      const segment = session.segments[selected];
+      if (!segment) return;
+      const detail = logic.segmentDetails(session,segment);
+      get('detail-index').textContent = String(selected + 1).padStart(2,'0') + ' / ' + String(session.segments.length).padStart(2,'0');
+      get('detail-period').textContent = period(segment);
+      get('detail-app').textContent = detail.name;
+      get('detail-process').textContent = detail.process ? 'PROCESS / ' + detail.process : '';
+      get('detail-duration').textContent = duration(segment.end - segment.start);
+      get('detail-title').classList.toggle('empty-title',!detail.title);
+      const context = { unrecorded:'本次未开启应用记录，无法还原具体应用或页面。', disabled:'本次未记录窗口标题，无法区分同一浏览器中的页面。', unavailable:'已开启标题记录，但此片段没有获取到窗口标题，无法据此识别具体页面。' };
+      const stateNotes = { rest:'短休息：放下手头内容，让眼睛和身体稍微放松。', paused:'计时已暂停；此片段不计入活动时长。', unobserved:'此段缺少有效观测，可能发生了锁屏、系统挂起或采集间断；不推断其用途。' };
+      get('detail-title').textContent = detail.title ? '窗口标题 / ' + detail.title : context[detail.titleStatus] || stateNotes[segment.state] || '';
+      let note = segment.state === 'focus' ? '记录的是前台窗口，不推断内容用途或注意力。' : '此片段不参与应用分布与用途分类。';
+      if (segment.state === 'focus' && session.recording_enabled === true && Number.isFinite(segment.idle_seconds) && segment.idle_seconds > 0) note += ' 片段内观测到的最长键鼠空闲约 ' + duration(segment.idle_seconds) + '，观看视频或阅读时也会出现。';
+      get('detail-note').textContent = note;
+      get('previous').disabled = selected === 0;
+      get('next').disabled = selected === session.segments.length - 1;
+      get('segment-select').value = String(selected);
+      get('classification').disabled = segment.state !== 'focus';
+      get('classification').value = segment.state === 'focus' ? logic.classificationFor(segment,selected,classifications) : 'unknown';
+      Array.from(get('event-list').children).forEach((row,index) => row.setAttribute('aria-pressed',String(index === selected)));
+      Array.from(get('lanes').querySelectorAll('.lane-block')).forEach(block => block.setAttribute('aria-pressed',String(Number(block.dataset.segment) === selected)));
+    }
+    function renderClassification() {
+      const result = logic.aggregate(session,classifications);
+      get('related-ratio').textContent = percentage(result.ratio);
+      get('coverage').textContent = percentage(result.coverage);
+      get('classification-note').textContent = '未分类 ' + duration(result.unknown) + '。相关占比 = 相关 /（相关 + 无关）；覆盖率 = 已分类 / 活动时长。休息、暂停与未观测均不计入分母；这些比例不代表学习质量。';
+    }
+    get('previous').addEventListener('click',() => select(selected - 1,true));
+    get('next').addEventListener('click',() => select(selected + 1,true));
+    get('segment-select').addEventListener('change',() => select(Number(get('segment-select').value)));
+    get('classification').addEventListener('change',() => {
+      if (!session.segments[selected] || session.segments[selected].state !== 'focus') return;
+      classifications[selected] = get('classification').value;
+      renderClassification();
+      get('status').textContent = '已更新此片段用途，下载可保留当前分类。';
+    });
+    get('download').addEventListener('click',() => {
+      try {
+        const html = logic.buildSavedHTML(originalMarkup,session,classifications);
+        const url = URL.createObjectURL(new Blob([html],{ type:'text/html;charset=utf-8' }));
+        const link = make('a');
+        link.href = url;
+        link.download = '专注记录-' + started.getFullYear() + '-' + String(started.getMonth() + 1).padStart(2,'0') + '-' + String(started.getDate()).padStart(2,'0') + '-' + String(session.session_id || 'session').replace(/[^a-zA-Z0-9_-]/g,'').slice(0,8) + '.html';
+        document.body.append(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(url),30000);
+        get('status').textContent = '已发起下载，包含当前用途分类；不包含对话复盘内容。';
+      } catch (_) { get('status').textContent = '浏览器未能生成下载，请保留原报告文件后重试。'; }
+    });
+    renderSelection();
+    renderClassification();
+  })();
+  </script>
+</body>
+</html>

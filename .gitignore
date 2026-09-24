@@ -1,2 +1,5 @@
 # macOS Finder metadata
 .DS_Store
+# Python 字节码缓存（脚本被当作模块 import 时会生成）
+__pycache__/
+*.pyc

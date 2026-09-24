@@ -4,7 +4,7 @@
 
 <p>把开发、学习与日常工作的经验，整理成可复用的 Agent 技能。</p>
 
-<p><sub>22 SKILLS &nbsp; / &nbsp; 3 COLLECTIONS</sub></p>
+<p><sub>23 SKILLS &nbsp; / &nbsp; 3 COLLECTIONS</sub></p>
 
 <p>
   <a href="#catalog">技能目录</a> &nbsp;·&nbsp;
@@ -25,7 +25,7 @@
 | 分类 | 用途 | 数量 |
 |:-----|:-----|-----:|
 | [coding/](#coding) | 开发工作流、代码审查与前端设计 | 5 |
-| [learning/](#learning) | 代码库理解、个性化学习与引导教学 | 3 |
+| [learning/](#learning) | 专注学习、代码库理解、个性化学习与引导教学 | 4 |
 | [tools/](#tools) | 思维追问、文档处理、工程方法与技能管理 | 14 |
 
 <a id="coding"></a>
@@ -46,6 +46,7 @@
 
 | Skill | 说明 |
 |:------|:-----|
+| [focus-session](./learning/focus-session/SKILL.md) | 专注学习：随机提醒、当次时间轴与统计，以及可选的主动回忆；自带 Windows 计时工具 |
 | [nano-codebase](./learning/nano-codebase/SKILL.md) | 【nano-xxx】将陌生代码库蒸馏为 nano 版本 + 路径追踪式学习指南 |
 | [personalizing-learning-content](./learning/personalizing-learning-content/SKILL.md) | 根据用户提供的知识库改写文本、Markdown 或 PDF 学习材料，输出正文与知识差异说明 |
 | [socratic-teaching-scaffolds](./learning/socratic-teaching-scaffolds/SKILL.md) | 【自学】苏格拉底式教学：引导提问与渐退支架，帮助学习者自主发现知识 |
