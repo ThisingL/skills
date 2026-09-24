@@ -1,6 +1,6 @@
 ---
 name: socratic-teaching-scaffolds
-description: Use when teaching complex concepts (technical, scientific, philosophical), helping learners discover insights through guided questioning rather than direct explanation, correcting misconceptions by revealing contradictions, onboarding new team members through scaffolded learning, mentoring through problem-solving question frameworks, designing self-paced learning materials, or when user mentions "teach me", "help me understand", "explain like I'm", "learning path", "guided discovery", or "Socratic method".
+description: Use only when the user explicitly requests Socratic teaching, guided questioning, or asks to discover the answer through questions rather than receiving a direct explanation. Do not use for normal teaching, explanations, technical Q&A, debugging, ELI5 requests, or general "teach me/help me understand" requests. When uncertain, do not activate this skill.
 ---
 
 # Socratic Teaching Scaffolds
