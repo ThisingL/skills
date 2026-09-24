@@ -4,7 +4,7 @@
 
 <p>把开发、学习与日常工作的经验，整理成可复用的 Agent 技能。</p>
 
-<p><sub>21 SKILLS &nbsp; / &nbsp; 3 COLLECTIONS</sub></p>
+<p><sub>22 SKILLS &nbsp; / &nbsp; 3 COLLECTIONS</sub></p>
 
 <p>
   <a href="#catalog">技能目录</a> &nbsp;·&nbsp;
@@ -26,7 +26,7 @@
 |:-----|:-----|-----:|
 | [coding/](#coding) | 开发工作流、代码审查与前端设计 | 5 |
 | [learning/](#learning) | 代码库理解、个性化学习与引导教学 | 3 |
-| [tools/](#tools) | 思维追问、文档处理、工程方法与技能管理 | 13 |
+| [tools/](#tools) | 思维追问、文档处理、工程方法与技能管理 | 14 |
 
 <a id="coding"></a>
 
@@ -69,6 +69,7 @@
 | [defuddle](./tools/defuddle/SKILL.md) | 使用 Defuddle CLI 将网页提取为干净的 Markdown，去除导航和页面杂项 |
 | [domain-modeling](./tools/domain-modeling/SKILL.md) | 梳理项目领域模型与统一术语，维护 `CONTEXT.md` 和架构决策记录（ADR） |
 | [obsidian-markdown](./tools/obsidian-markdown/SKILL.md) | 创建和编辑 Obsidian Markdown，支持双链、嵌入、callout、属性与标签 |
+| [Humanizer-zh](./tools/Humanizer-zh/SKILL.md) | 去除中文文本的 AI 生成痕迹，基于维基百科 AI 写作特征综合指南检测并改写 |
 | [thesis-polish](./tools/thesis-polish/SKILL.md) | 【中文毕业论文】理工科论文写作与审校双模式，基于范例论文风格指纹，去除 AI 痕迹 |
 | [ustc-se-thesis](./tools/ustc-se-thesis/SKILL.md) | 中国科学技术大学软件学院专硕论文指南，覆盖章节组织、排版、UML 建模与规范自查 |
 
