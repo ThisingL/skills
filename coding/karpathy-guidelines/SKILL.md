@@ -1,6 +1,6 @@
 ---
 name: karpathy-guidelines
-description: Behavioral guidelines to reduce common LLM coding mistakes. Use when writing, reviewing, or refactoring code to avoid overcomplication, make surgical changes, surface assumptions, and define verifiable success criteria.
+description: Use only when the user explicitly asks to apply these guidelines (e.g. "按 karpathy 规则写", "apply karpathy guidelines", "/karpathy"), or explicitly asks for a review against them. Do not activate for ordinary writing, reviewing, or refactoring tasks. When uncertain, do not activate this skill.
 license: MIT
 ---
 
